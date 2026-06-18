@@ -22,10 +22,15 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      const [vehicles, info] = await Promise.all([loadIndex(), loadAllFlatInfo()]);
-      setIndex(vehicles);
-      setFlatInfo(info);
-      setLoading(false);
+      try {
+        const [vehicles, info] = await Promise.all([loadIndex(), loadAllFlatInfo()]);
+        setIndex(vehicles);
+        setFlatInfo(info);
+      } catch (e) {
+        console.error("Firebase load failed:", e);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 

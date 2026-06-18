@@ -35,7 +35,8 @@ function Slot({ title, type, list, max, adding, setAdding, setEditing, onAdd, on
 }
 
 function ResidentInfo({ flatKey, info, onSaved }) {
-  const [editing, setEditing] = useState(false);
+  const hasInfo = info?.residentName || info?.contact;
+  const [editing, setEditing] = useState(!hasInfo);
   const [name, setName] = useState(info?.residentName || "");
   const [contact, setContact] = useState(info?.contact || "");
   const [saving, setSaving] = useState(false);
@@ -77,7 +78,6 @@ function ResidentInfo({ flatKey, info, onSaved }) {
     );
   }
 
-  const hasInfo = info?.residentName || info?.contact;
   return (
     <div className="resident-info">
       <div className="info-row">
