@@ -63,7 +63,7 @@ export default function VehicleForm({ type, initial, onSave, onCancel }) {
                 <div className="photo-hint">{busy ? "Processing…" : "Take or choose a photo"}</div>
                 <div className="photo-sub">Show the vehicle with its number plate</div>
               </>}
-          <input type="file" accept="image/*"
+          <input type="file" accept="image/*,.heic,.heif"
             onChange={pick} style={{ display: "none" }} />
         </label>
         {dataUrl && <div className="photo-sub" style={{ marginTop: 6 }}>Tap the image to replace it.</div>}
