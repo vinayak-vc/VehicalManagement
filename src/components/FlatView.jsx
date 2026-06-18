@@ -8,15 +8,24 @@ import VehicleForm from "./VehicleForm";
 import VehicleCard from "./VehicleCard";
 
 function Slot({ title, type, list, max, adding, setAdding, setEditing, onAdd, onUpdate, onRemove, editing }) {
-  const full = list.length >= max;
+  const over = list.length > max;
+  const atLimit = list.length === max;
+  const quotaClass = over ? "quota-warn" : atLimit ? "quota-full" : "quota-open";
+  const quotaLabel = over
+    ? `${list.length} / ${max} — exceeds limit`
+    : `${list.length} / ${max} used`;
+
   return (
     <div className="slot-group">
       <div className="slot-title">
         <span>{title}</span>
-        <span className={"slot-quota " + (full ? "quota-full" : "quota-open")}>
-          {list.length} / {max} used
-        </span>
+        <span className={"slot-quota " + quotaClass}>{quotaLabel}</span>
       </div>
+      {over && (
+        <div className="quota-warning">
+          Society limit is {max} {type === "car" ? "car" : "two-wheeler"}{max !== 1 ? "s" : ""} per flat.
+        </div>
+      )}
       {list.map((v) =>
         editing === v.id
           ? <VehicleForm key={v.id} type={type} initial={v}
@@ -25,7 +34,7 @@ function Slot({ title, type, list, max, adding, setAdding, setEditing, onAdd, on
       )}
       {adding === type
         ? <VehicleForm type={type} onSave={(p) => onAdd(type, p)} onCancel={() => setAdding(null)} />
-        : !full && (
+        : (
           <button className="add-slot" onClick={() => { setEditing(null); setAdding(type); }}>
             + Add {type === "car" ? "car" : "two-wheeler"}
           </button>

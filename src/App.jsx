@@ -11,6 +11,12 @@ export default function App() {
   const [flatInfo, setFlatInfo] = useState({});
   const [loading, setLoading] = useState(true);
   const [flat, setFlat] = useState(null); // { tower, flatNo, flatKey }
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   const refresh = useCallback(async () => {
     setIndex(await loadIndex());
@@ -39,7 +45,12 @@ export default function App() {
   return (
     <div className="app">
       <header className="hdr">
-        <div className="hdr-eyebrow">Vehicle Registry</div>
+        <div className="hdr-top">
+          <div className="hdr-eyebrow">Vehicle Registry</div>
+          <button className="theme-toggle" onClick={() => setTheme(t => t === "dark" ? "light" : "dark")}>
+            {theme === "dark" ? "Light" : "Dark"}
+          </button>
+        </div>
         <div className="hdr-title">{SOCIETY_NAME}</div>
         <div className="hdr-sub">Vaishnodevi Circle, Ahmedabad · {TOWERS.length} towers · {TOTAL_FLATS} flats</div>
         <div className="stats">

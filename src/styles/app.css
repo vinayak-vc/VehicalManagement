@@ -1,25 +1,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Oswald:wght@600;700&display=swap');
 
 *{box-sizing:border-box;margin:0;padding:0;}
+
+/* Dark theme — default */
 :root{
+  --ink:#E2EBF3; --ink-soft:#94AABF; --paper:#0D1821; --card:#162030;
+  --hdr-bg:#060E18; --stat-bg:#0F1E2E; --stat-border:#1A3050;
+  --teal:#20A090; --teal-deep:#178075; --marigold:#E6A93C;
+  --green:#3DAD85; --rust:#E06040; --line:#1E3045; --muted:#5A7A90;
+  --badge-bg:rgba(32,160,144,.18); --veh-bg:#111E2D; --photo-bg:#1A2E42;
+}
+
+/* Light theme */
+[data-theme="light"]{
   --ink:#14202E; --ink-soft:#2A3B4D; --paper:#EBEEF2; --card:#FFFFFF;
+  --hdr-bg:#14202E; --stat-bg:#2A3B4D; --stat-border:#33455A;
   --teal:#15605A; --teal-deep:#0E423D; --marigold:#E6A93C;
   --green:#2E8B6A; --rust:#B14A2C; --line:#D7DDE4; --muted:#6A7785;
+  --badge-bg:#E9F2F0; --veh-bg:#FCFDFE; --photo-bg:#E3E8ED;
 }
+
 .app{font-family:'Inter',system-ui,sans-serif;background:var(--paper);
   min-height:100vh;color:var(--ink);max-width:540px;margin:0 auto;
   -webkit-font-smoothing:antialiased;}
 
 /* Header */
-.hdr{background:var(--ink);color:#fff;padding:18px 18px 16px;
+.hdr{background:var(--hdr-bg);color:#fff;padding:18px 18px 16px;
   border-bottom:3px solid var(--marigold);position:sticky;top:0;z-index:20;}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;}
 .hdr-eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--marigold);font-weight:600;}
 .hdr-title{font-family:'Space Grotesk',sans-serif;font-weight:700;
   font-size:23px;line-height:1.1;margin-top:2px;}
 .hdr-sub{font-size:12.5px;color:#9FB0C0;margin-top:3px;}
+.theme-toggle{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  color:#9FB0C0;font-family:'Inter';font-size:11px;font-weight:600;
+  padding:5px 10px;border-radius:20px;cursor:pointer;letter-spacing:.04em;
+  flex-shrink:0;margin-top:2px;transition:.15s;}
+.theme-toggle:hover{background:rgba(255,255,255,.14);}
 .stats{display:flex;gap:8px;margin-top:14px;}
-.stat{flex:1;background:var(--ink-soft);border:1px solid #33455A;
+.stat{flex:1;background:var(--stat-bg);border:1px solid var(--stat-border);
   border-radius:11px;padding:9px 11px;}
 .stat-n{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;}
 .stat-l{font-size:10.5px;color:#9FB0C0;letter-spacing:.04em;text-transform:uppercase;margin-top:1px;}
@@ -76,18 +96,22 @@
 .slot-quota{font-size:11px;font-weight:500;color:var(--muted);}
 .quota-full{color:var(--rust);}
 .quota-open{color:var(--green);}
+.quota-warn{color:var(--marigold);}
+.quota-warning{font-size:11.5px;color:var(--marigold);background:rgba(230,169,60,.1);
+  border:1px solid rgba(230,169,60,.25);border-radius:8px;padding:7px 10px;
+  margin-bottom:8px;}
 
 .add-slot{width:100%;padding:14px;border:1.5px dashed var(--line);
-  border-radius:12px;background:#FAFBFC;color:var(--teal);font-weight:600;
+  border-radius:12px;background:var(--card);color:var(--teal);font-weight:600;
   font-size:14px;cursor:pointer;display:flex;align-items:center;
-  justify-content:center;gap:7px;}
-.add-slot:active{background:#F2F5F8;}
+  justify-content:center;gap:7px;transition:.12s;}
+.add-slot:active{opacity:.7;}
 
 /* Vehicle card */
 .veh{display:flex;gap:12px;padding:12px;border:1px solid var(--line);
-  border-radius:13px;background:#FCFDFE;margin-bottom:8px;}
+  border-radius:13px;background:var(--veh-bg);margin-bottom:8px;}
 .veh-photo{width:78px;height:78px;border-radius:10px;object-fit:cover;
-  background:#E3E8ED;flex-shrink:0;}
+  background:var(--photo-bg);flex-shrink:0;}
 .veh-photo.empty{display:flex;align-items:center;justify-content:center;
   color:var(--muted);font-size:10px;text-align:center;padding:4px;}
 .veh-body{flex:1;min-width:0;}
@@ -118,7 +142,7 @@
 .form-title{font-family:'Space Grotesk';font-weight:700;font-size:16px;margin-bottom:14px;}
 .form-field{margin-bottom:13px;}
 .photo-pick{display:block;border:1.5px dashed var(--line);border-radius:12px;
-  padding:16px;text-align:center;cursor:pointer;background:#FAFBFC;}
+  padding:16px;text-align:center;cursor:pointer;background:var(--card);}
 .photo-pick.has{padding:8px;}
 .photo-preview{width:100%;max-height:200px;object-fit:cover;border-radius:9px;}
 .photo-hint{font-size:13px;color:var(--teal);font-weight:600;}
@@ -133,7 +157,7 @@
   color:var(--ink-soft);margin-bottom:6px;}
 .res-flat{font-size:12px;color:var(--muted);margin-top:6px;}
 .badge{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 8px;
-  border-radius:20px;background:#E9F2F0;color:var(--teal);
+  border-radius:20px;background:var(--badge-bg);color:var(--teal);
   text-transform:uppercase;letter-spacing:.05em;}
 
 .foot{font-size:11px;color:var(--muted);text-align:center;
@@ -142,7 +166,7 @@
 
 /* Resident info — My flat */
 .resident-info{border-top:1px solid var(--line);margin-top:14px;padding-top:14px;}
-.resident-info.editing{padding:14px;background:#FAFBFC;border-radius:12px;
+.resident-info.editing{padding:14px;background:var(--veh-bg);border-radius:12px;
   border:1.5px dashed var(--line);margin-top:14px;}
 .info-row{display:flex;justify-content:space-between;align-items:center;}
 .info-name{font-weight:600;font-size:14px;color:var(--ink);}
