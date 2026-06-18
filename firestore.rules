@@ -4,5 +4,8 @@ service cloud.firestore {
     match /vehicles/{vehicleId} {
       allow read, write: if true;
     }
+    match /flats/{flatKey} {
+      allow read, write: if true;
+    }
   }
 }
