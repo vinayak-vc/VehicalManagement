@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { SOCIETY_NAME, TOTAL_FLATS, TOWERS, RERA_NO, RERA_URL } from "./constants";
-import { loadIndex } from "./storage/registry";
+import { loadIndex, loadAllFlatInfo } from "./storage/registry";
 import FlatPicker from "./components/FlatPicker";
 import FlatView from "./components/FlatView";
 import GateLookup from "./components/GateLookup";
@@ -8,6 +8,7 @@ import GateLookup from "./components/GateLookup";
 export default function App() {
   const [tab, setTab] = useState("flat");
   const [index, setIndex] = useState([]);
+  const [flatInfo, setFlatInfo] = useState({});
   const [loading, setLoading] = useState(true);
   const [flat, setFlat] = useState(null); // { tower, flatNo, flatKey }
 
@@ -15,9 +16,15 @@ export default function App() {
     setIndex(await loadIndex());
   }, []);
 
+  const refreshFlatInfo = useCallback(async () => {
+    setFlatInfo(await loadAllFlatInfo());
+  }, []);
+
   useEffect(() => {
     (async () => {
-      setIndex(await loadIndex());
+      const [vehicles, info] = await Promise.all([loadIndex(), loadAllFlatInfo()]);
+      setIndex(vehicles);
+      setFlatInfo(info);
       setLoading(false);
     })();
   }, []);
@@ -58,10 +65,17 @@ export default function App() {
           ? <div className="spinner">Loading registry…</div>
           : tab === "flat"
             ? flat
-              ? <FlatView {...flat} index={index} refresh={refresh} onChange={() => setFlat(null)} />
+              ? <FlatView
+                  {...flat}
+                  index={index}
+                  flatInfo={flatInfo}
+                  refresh={refresh}
+                  refreshFlatInfo={refreshFlatInfo}
+                  onChange={() => setFlat(null)}
+                />
               : <FlatPicker onOpen={(tower, flatNo) =>
                   setFlat({ tower, flatNo, flatKey: tower + "-" + flatNo })} />
-            : <GateLookup index={index} />}
+            : <GateLookup index={index} flatInfo={flatInfo} />}
 
         <div className="foot">
           Prototype · Each flat may register 1 car and 2 two-wheelers.<br />

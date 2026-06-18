@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
-  loadIndex, addVehicle, updateVehicle, removeVehicle,
-  savePhoto, deletePhoto,
+  addVehicle, updateVehicle, removeVehicle,
+  savePhoto, deletePhoto, saveFlatInfo,
 } from "../storage/registry";
 import { MAX_CARS, MAX_TWO } from "../constants";
 import VehicleForm from "./VehicleForm";
@@ -34,7 +34,66 @@ function Slot({ title, type, list, max, adding, setAdding, setEditing, onAdd, on
   );
 }
 
-export default function FlatView({ flatKey, tower, flatNo, index, onChange, refresh }) {
+function ResidentInfo({ flatKey, info, onSaved }) {
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(info?.residentName || "");
+  const [contact, setContact] = useState(info?.contact || "");
+  const [saving, setSaving] = useState(false);
+
+  async function handleSave() {
+    setSaving(true);
+    await saveFlatInfo(flatKey, { residentName: name.trim(), contact: contact.trim() });
+    setSaving(false);
+    setEditing(false);
+    onSaved();
+  }
+
+  function handleEdit() {
+    setName(info?.residentName || "");
+    setContact(info?.contact || "");
+    setEditing(true);
+  }
+
+  if (editing) {
+    return (
+      <div className="resident-info editing">
+        <div className="form-field" style={{ marginBottom: 10 }}>
+          <label className="label">Resident name</label>
+          <input className="input" value={name} onChange={(e) => setName(e.target.value)}
+            placeholder="e.g. Rahul Sharma" />
+        </div>
+        <div className="form-field" style={{ marginBottom: 10 }}>
+          <label className="label">Contact number</label>
+          <input className="input" value={contact} onChange={(e) => setContact(e.target.value)}
+            placeholder="e.g. 9876543210" inputMode="tel" />
+        </div>
+        <div className="form-actions">
+          <button className="btn btn-ghost" onClick={() => setEditing(false)}>Cancel</button>
+          <button className="btn btn-primary btn-block" onClick={handleSave} disabled={saving}>
+            {saving ? "Saving…" : "Save info"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const hasInfo = info?.residentName || info?.contact;
+  return (
+    <div className="resident-info">
+      <div className="info-row">
+        <div>
+          <div className="info-name">{info?.residentName || <span className="info-empty">No resident name</span>}</div>
+          <div className="info-contact">{info?.contact || <span className="info-empty">No contact</span>}</div>
+        </div>
+        <button className="flat-change" onClick={handleEdit}>
+          {hasInfo ? "Edit info" : "+ Add info"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function FlatView({ flatKey, tower, flatNo, index, flatInfo, onChange, refresh, refreshFlatInfo }) {
   const [adding, setAdding] = useState(null);
   const [editing, setEditing] = useState(null);
 
@@ -86,6 +145,13 @@ export default function FlatView({ flatKey, tower, flatNo, index, onChange, refr
         </div>
         <button className="flat-change" onClick={onChange}>Change flat</button>
       </div>
+
+      <ResidentInfo
+        flatKey={flatKey}
+        info={flatInfo[flatKey]}
+        onSaved={refreshFlatInfo}
+      />
+
       <Slot title="Car" type="car" list={cars} max={MAX_CARS} {...slotProps} />
       <Slot title="Two-wheelers" type="two_wheeler" list={twos} max={MAX_TWO} {...slotProps} />
     </div>
